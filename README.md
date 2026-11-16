@@ -4,7 +4,7 @@ Aplikasi web berbasis Streamlit untuk melakukan analisis sentimen komentar video
 
 ## Tahapan Pengerjaan
 - [x] Pengumpulan dataset awal (22k komentar)
-- [ ] Pelabelan ulang (*pseudo-labeling*) menggunakan IndoBERT
-- [ ] Preprocessing teks & penanganan *imbalanced data*
+- [x] Pelabelan ulang (*pseudo-labeling*) menggunakan IndoBERT
+- [x] Preprocessing teks & penanganan *imbalanced data*
 - [ ] Pelatihan & evaluasi model Bi-LSTM
 - [ ] Pengembangan antarmuka Streamlit & visualisasi
