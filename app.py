@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 
 from src.scraper import extract_video_id, fetch_youtube_data
 from src.predictor import load_artifacts, predict_sentiments
@@ -122,19 +123,32 @@ if analyze_btn:
                 st.plotly_chart(fig_hist, use_container_width=True)
 
             # WordCloud per Sentimen
-            st.subheader("Kata Kunci Dominan (WordCloud)")
-            wc1, wc2 = st.columns(2)
+            st.subheader("☁️ Kata Kunci Dominan (WordCloud)")
 
-            for col, label, title, cmap in [
-                (wc1, "positive", "Komentar Positif", "Greens"),
-                (wc2, "negative", "Komentar Negatif", "Reds")
-            ]:
+            factory = StopWordRemoverFactory()
+            stopwords_id = set(factory.get_stop_words())
+            stopwords_id.update({"bang", "abang", "gue", "gw", "sih", "deh", "dong", "nih", "tuh", "aja", "nya"})
+
+            wc_col1, wc_col2 = st.columns(2)
+            wc_configs = [
+                (wc_col1, "positive", "Komentar Positif", "Greens"),
+                (wc_col2, "negative", "Komentar Negatif", "Reds"),
+            ]
+
+            for col, sentiment_label, title, cmap in wc_configs:
                 with col:
                     st.markdown(f"**{title}**")
-                    subset_text = " ".join(df_result[df_result["sentiment"] == label]["clean_text"])
+                    subset_text = " ".join(df_result[df_result["sentiment"] == sentiment_label]["clean_text"])
                     if subset_text.strip():
-                        try:
-                            wc = WordCloud(width=600, height=350, background_color="white", colormap=cmap).generate(subset_text)
+                        try: 
+                            wc = WordCloud(
+                                width=600,
+                                height=350,
+                                background_color="white",
+                                colormap=cmap,
+                                stopwords=stopwords_id
+                            ).generate(subset_text)
+                            
                             fig, ax = plt.subplots(figsize=(6, 3.5))
                             ax.imshow(wc, interpolation="bilinear")
                             ax.axis("off")
@@ -142,7 +156,7 @@ if analyze_btn:
                         except ValueError:
                             st.caption("Kosakata belum cukup beragam untuk membuat WordCloud.")
                     else:
-                        st.caption("Tidak cukup kata untuk membuat WordCloud.")
+                        st.caption(f"Tidak ada data {title.lower()} yang cukup.")
 
             st.divider()
 
