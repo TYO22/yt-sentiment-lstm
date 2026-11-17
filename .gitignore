@@ -13,3 +13,6 @@ Thumbs.db
 # File vektor kata berukuran gigabyte (misal FastText)
 *.vec
 *.bin
+
+# FIle API key
+.streamlit/secrets.toml
